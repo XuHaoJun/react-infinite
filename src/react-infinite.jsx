@@ -7,6 +7,8 @@ var React = global.React || require('react'),
 var Infinite = React.createClass({
 
   propTypes: {
+    enableFTScroller: React.PropTypes.bool,
+
     handleScroll: React.PropTypes.func,
 
     // preloadBatchSize causes updates only to
@@ -43,6 +45,7 @@ var Infinite = React.createClass({
 
   getDefaultProps() {
     return {
+      enableFTScroller: false,
       handleScroll: () => {},
       loadingSpinnerDelegate: <div/>,
       onInfiniteLoad: () => {},
@@ -130,6 +133,14 @@ var Infinite = React.createClass({
   componentDidUpdate(prevProps, prevState) {
     if (React.Children.count(this.props.children) !== React.Children.count(prevProps.children)) {
       this.setStateFromScrollTop(this.getScrollTop());
+    }
+    if (this.props.enableFTScroller) {
+      var FTScroller = require('ftscroller');
+      var scroller = new FTScroller(React.findDOMNode(this.refs.scrollable), {
+        scrollbars: true,
+        scrollingX: false
+      });
+      scroller.addEventListener('scroll', this.infiniteHandleScroll);
     }
   },
 
